@@ -1,19 +1,18 @@
 package model.data_structures;
 
-public class DuplaSC<T> implements Comparable<DuplaSC>{
+public class DuplaSC<T, K>{
 
-	private int llave;
+	private K llave;
 	private T[] valores;
 	private int tam;
 
-	public DuplaSC(int pLlave)
+	public DuplaSC(K pLlave)
 	{
-		int tam = 3;
-		T[] valores = (T[]) new Object[3];
+		T[] valores = (T[]) new Object[10];
 		llave = pLlave;
 	}
 
-	public void agregarValor(int pLlave, T valor)
+	public void agregarValor(T pValue)
 	{
 		if(tam == valores.length)
 		{
@@ -28,23 +27,24 @@ public class DuplaSC<T> implements Comparable<DuplaSC>{
 		}
 		else
 		{
-			valores[valores.length] = valor;
+			valores[valores.length] = pValue;
 			tam++;
 		}
+		tam++;
 	}
 
-	public int compareTo(DuplaSC arg0) {
-		if(this.llave > arg0.llave)
-		{
-			return 1;
-		}
-		else if(this.llave < arg0.llave)
-		{
-			return -1;
-		}
-		else
-		{
-			return 0;
-		}
+	public T[] darValores()
+	{
+		return valores;
+	}
+
+	public int darTamanio()
+	{
+		return tam;
+	}
+	
+	public K darLlave()
+	{
+		return llave;
 	}
 }
