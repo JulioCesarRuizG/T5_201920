@@ -6,13 +6,14 @@ import java.util.Map;
 
 public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 
-	private DuplaSC[] llaves;
+	private HashMap[] llaves;
 	private int N;
+	private int M;
 	private int numElem;
 	private int pos = numElem;
 
 	public HashSC(int modulo) {
-		llaves = (DuplaSC[])new Comparable[modulo];
+		llaves = new HashMap[modulo];
 		N = modulo;
 	}
 
@@ -21,13 +22,13 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 		int posicion = hash(pKey);
 		if(llaves[posicion] != null)
 		{
-			llaves[posicion].agregarValor(pValue);
+			HashMap<K, T> valor= new HashMap<K, T>(); 
+			llaves[posicion] = valor;
+			llaves[posicion].put(pKey, pValue);
 		}
 		else 
 		{
-			DuplaSC i = new DuplaSC(posicion);
-			llaves[posicion] = i;
-			llaves[posicion].agregarValor(pValue);
+			llaves[posicion].put(pKey, pValue);
 		}
 
 
@@ -35,41 +36,42 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 
 	public Iterator<T> getSet(K pkey)
 	{
-		DuplaSC buscado = null;
-		for(DuplaSC k : llaves)
-		{
-			if(k.darLlave() == pkey);
+		HashMap<K, T> buscado = null;
+		int posicion = hash(pkey);
+		HashMap<K, T> buscar = llaves[posicion];
+			if(buscar.containsKey(pkey));
 			{
-				buscado = k;
+				for(Map.Entry<K, T>entry:buscar.entrySet())
+				{
+					if(entry.getKey() == pkey)
+					{
+						T valor = entry.getValue();
+						buscado.put(pkey, valor);
+					}
+				}
 			}
-		}
 		if(buscado == null)
 		{
 			return null;
 		}
 		else
 		{
-			HashMap<K, T> diccionario = null;
-			for(Object k : buscado.darValores())
-			{
-				T valor =  (T) k;
-				K llave = (K) buscado.darLlave();
-				diccionario.put(llave, valor);
-			}
-			Iterator<T> values= diccionario.values().iterator();
+			Iterator<T> values= buscado.values().iterator();
 			return values;
 		}
-		
+
 	}
 
 	public Iterator<T> deleteSet(K pkey)
 	{
 		Iterator<T> values= getSet(pkey);
-		for(int i=0 ; i<llaves.length ; i++)
+		int posicion = hash(pkey);
+		if(getSet(pkey) != null)
 		{
-			if(llaves[i].darLlave() == pkey)
+			HashMap<K, T> buscar = llaves[posicion];
+			for(Map.Entry<K, T>entry:buscar.entrySet())
 			{
-				llaves[i] = null;
+				llaves[posicion].remove(entry.getKey());
 			}
 		}
 		return values;
@@ -97,16 +99,12 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 		//		}
 		//		valores = todos;
 		HashMap<T, K> diccionario = new HashMap<T, K>();
-		for(DuplaSC k : llaves)
+		for(HashMap<K, T> k : llaves)
 		{
-			for(Object t : k.darValores())
+			for(Map.Entry<K, T>entry:k.entrySet())
 			{
-				K llave = (K) k.darLlave();
-				T value = (T) t;
-				diccionario.put(value, llave);
+				diccionario.put(entry.getValue(), entry.getKey());
 			}
-
-
 		}
 		return diccionario;
 	}
