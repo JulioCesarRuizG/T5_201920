@@ -9,12 +9,11 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 	private HashMap[] llaves;
 	private int N;
 	private int M;
-	private int numElem;
-	private int pos = numElem;
+	private int pos = N;
 
 	public HashSC(int modulo) {
 		llaves = new HashMap[modulo];
-		N = modulo;
+		M = modulo;
 	}
 
 	public void putInSet( K pKey, T pValue)
@@ -30,6 +29,11 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 		{
 			llaves[posicion].put(pKey, pValue);
 		}
+		N++;
+		if(N/M >= 5)
+		{
+			rehash();
+		}
 
 
 	}
@@ -39,17 +43,17 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 		HashMap<K, T> buscado = null;
 		int posicion = hash(pkey);
 		HashMap<K, T> buscar = llaves[posicion];
-			if(buscar.containsKey(pkey));
+		if(buscar.containsKey(pkey));
+		{
+			for(Map.Entry<K, T>entry:buscar.entrySet())
 			{
-				for(Map.Entry<K, T>entry:buscar.entrySet())
+				if(entry.getKey() == pkey)
 				{
-					if(entry.getKey() == pkey)
-					{
-						T valor = entry.getValue();
-						buscado.put(pkey, valor);
-					}
+					T valor = entry.getValue();
+					buscado.put(pkey, valor);
 				}
 			}
+		}
 		if(buscado == null)
 		{
 			return null;
@@ -79,7 +83,7 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 
 	private int hash(K key)
 	{
-		return (key.hashCode() & 0x7fffffff) % N;
+		return (key.hashCode() & 0x7fffffff) % M;
 	}
 
 	private HashMap<T, K> totales()
@@ -109,6 +113,38 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 		return diccionario;
 	}
 
+	public void rehash()
+	{
+		boolean encontrado = false;
+		int[] primos = {7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97};
+		for(int i:primos)
+		{
+			if(encontrado == true)
+			{
+				M = i;
+				HashMap[] llaves2 = new HashMap[M];
+				for(int k=0 ; k<llaves.length ; k++)
+				{
+					if(llaves[i] != null)
+					{
+						HashMap<K, T> actual = llaves[i];
+						for(Map.Entry<K, T>entry:actual.entrySet())
+						{
+							int posicion = hash(entry.getKey());
+							llaves2[posicion].put(entry.getKey(), entry.getValue());
+						}
+						
+					}
+					
+				}
+				llaves = llaves2;
+				return;
+			}
+			if(M == i) {
+				encontrado = true;
+			}
+		}
+	}
 	public Iterator<K> Keys()
 	{
 		HashMap<T, K> diccionario = totales();
