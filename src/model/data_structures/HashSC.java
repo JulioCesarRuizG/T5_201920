@@ -38,19 +38,19 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 
 	}
 
-	public Iterator<T> getSet(K pkey)
+	public Iterator<T> getSet(K llave)
 	{
 		HashMap<K, T> buscado = null;
-		int posicion = hash(pkey);
+		int posicion = hash(llave);
 		HashMap<K, T> buscar = llaves[posicion];
-		if(buscar.containsKey(pkey));
+		if(buscar.containsKey(llave));
 		{
 			for(Map.Entry<K, T>entry:buscar.entrySet())
 			{
-				if(entry.getKey() == pkey)
+				if(entry.getKey() == llave)
 				{
 					T valor = entry.getValue();
-					buscado.put(pkey, valor);
+					buscado.put(llave, valor);
 				}
 			}
 		}
@@ -111,6 +111,41 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 			}
 		}
 		return diccionario;
+	}
+	
+	public void buscarTiemposDeViaje(int trimestre, int zonaOrigen, int zonaDestimo)
+	{
+		String[] viajes = null;
+		for(HashMap<K, T> k : llaves)
+		{
+			for(Map.Entry<K, T>entry:k.entrySet())
+			{
+				String separar = (String) entry.getKey();
+				String[] partes = separar.split("-");
+				int trimestreK = Integer.parseInt(partes[0]);
+				int zonaorigenK = Integer.parseInt(partes[1]);
+				int zonadestinoK = Integer.parseInt(partes[2]);
+				if(trimestreK == trimestre && zonadestinoK == zonaDestimo && zonaorigenK == zonaOrigen)
+				{
+					double[] valores = (double[]) entry.getValue(); 
+					double tiempoPromedio = valores[0];
+					int dia = (int) valores[1];
+					int lugar = dia -1;
+					viajes[lugar] = viajes[lugar] + "-" + trimestreK + "," + zonaorigenK + "," + zonadestinoK + "," + dia + "," + tiempoPromedio;
+				}
+			}
+		}
+		for(String k : viajes)
+		{
+			int lugar = 1;
+			String[] separados = k.split("-");
+			for(int i=1 ; i<separados.length ; i++)
+			{
+				String[] datos = separados[i].split(",");
+				System.out.println("Viaje " + lugar + ": trimestre = " + datos[0] + " zona de origen = " + datos[1] + " zona de destino = " + datos[2] + " tiempo promedio " + datos[3]);
+				lugar ++;
+			}
+		}
 	}
 
 	public void rehash()
