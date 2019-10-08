@@ -95,7 +95,7 @@ public class HashSC <K extends Comparable<K>, T> {
 			nodo = nodo.darSiguiente();
 		}
 	}
-	
+
 	public T get(K pkey)
 	{
 		int posicion = hash(pkey);
@@ -115,7 +115,7 @@ public class HashSC <K extends Comparable<K>, T> {
 		}
 		return valor;
 	}
-	
+
 	public T delete(K pkey)
 	{
 		int posicion = hash(pkey);
@@ -138,8 +138,8 @@ public class HashSC <K extends Comparable<K>, T> {
 		llaves[posicion] = primero;
 		return valor;
 	}
-	
-	
+
+
 
 	public Iterador<T> deleteSet(K pkey)
 	{
@@ -231,42 +231,31 @@ public class HashSC <K extends Comparable<K>, T> {
 
 	public void rehash()
 	{
-		boolean encontrado = false;
-		int[] primos = {7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97};
-		for(int i:primos)
+		M = M*2;
+		Node[] llaves2 = new Node[M];
+		for(int k=0 ; k<llaves.length ; k++)
 		{
-			if(encontrado == true)
+			if(llaves[k] != null)
 			{
-				M = i;
-				Node[] llaves2 = new Node[M];
-				for(int k=0 ; k<llaves.length ; k++)
+				Node actual = llaves[k];
+				while(actual.darSiguiente() != null)
 				{
-					if(llaves[i] != null)
-					{
-						Node actual = llaves[i];
-						while(actual.darSiguiente() != null)
-						{
-							DuplaSC dupla = (DuplaSC) actual.darItem();
-							K key = (K) dupla.darLlave();
+					DuplaSC dupla = (DuplaSC) actual.darItem();
+					K key = (K) dupla.darLlave();
 
-							int posicion = hash(key);
-							Node nodo = new Node(dupla, null);
-							llaves2[posicion].agregarAlFinal(nodo);
-							actual = actual.darSiguiente();
-						}
-
-					}
-
+					int posicion = hash(key);
+					Node nodo = new Node(dupla, null);
+					llaves2[posicion].agregarAlFinal(nodo);
+					actual = actual.darSiguiente();
 				}
-				llaves = llaves2;
-				return;
+
 			}
-			if(M == i) {
-				encontrado = true;
-			}
+
 		}
+		llaves = llaves2;
+		return;
 	}
-	
+
 	public Iterador<K> Keys()
 	{
 		K[] todas = null;
