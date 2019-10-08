@@ -3,81 +3,123 @@ package model.data_structures;
 import java.util.Iterator;
 
 public class HashLP<K extends Comparable<K>, V> {
-	private DuplaLP[] llaves;
+	private K[] llaves;
+	private V[] values;
+	private V[][] valuesSet;
+	private K[] keysSet;
 	private int N;
-	private int nElementos;
+	private int nElementosIndividuales;
+	private int nElementosSet;
+	private int capacidadSet;
 	
 	public HashLP(int capacidadInicial) {
-		llaves = (DuplaLP[])new Comparable[capacidadInicial];
+		capacidadSet=7;
+		llaves = (K[]) new Comparable[capacidadInicial];
+		keysSet = (K[]) new Comparable[capacidadInicial];
+		values= (V[]) new Object[capacidadInicial];
+		valuesSet= (V[][]) new Object[capacidadInicial][capacidadSet];
 		N = capacidadInicial;
-		nElementos=0;
+		nElementosIndividuales=0;
+		nElementosSet=0;
 	}
 	
 	public void put(K pKey, V pValue)
 	{  boolean existe=false;
-	   int posicion=0;
-	while(!existe&&posicion<N){
-		DuplaLP actual= llaves[posicion];
-		if(actual!=null&&actual.darLlave()==pKey){
+	   int posicion=hash(pKey);
+	   K actual= llaves[posicion];
+	while(!existe&&actual!=null){
+		
+		if(actual.compareTo(pKey)==0){
 			existe=true;
-			actual.cambiarValor(pValue);
+			values[posicion]= pValue;
 		    	
 		}
-		posicion++;
+		posicion=(posicion+1)%N;
+		actual=llaves[posicion];
 	}
 		if(existe){
 			
 		}else{
-			nElementos++;
-	if(nElementos==N){
+			nElementosIndividuales++;
+	if(nElementosIndividuales==N){
 		N=N*2;
-		DuplaLP[] aux = (DuplaLP[])new Comparable[N];
+		K[] auxKeys = (K[])new Comparable[N];
+		V[] auxValues= (V[])new Object[N];
 		int posActual=0;
-		while(aux.length<nElementos){
-			aux[hash((K) llaves[posActual].darLlave())] = llaves[posActual];
+		while(auxKeys.length<nElementosIndividuales){
+			int hash=hash((K) llaves[posActual]);
+			auxKeys[hash] = llaves[posActual];
+			auxValues[hash]= values[posActual];
 		}
-		llaves=aux;
+		llaves=auxKeys;
+		values=auxValues;
 		
 	}
 	int hashKey= hash(pKey);
 	while(llaves[hashKey]!=null){
-		hashKey++;
-		if(hashKey==N){
-			hashKey=0;
-		}
-		llaves[hashKey]=new DuplaLP(pKey, pValue);
+		hashKey=(hashKey+1)%N;
 	}
+	llaves[hashKey]=pKey;
+	values[hashKey]=pValue;
 	
 	}
 	}
-		
+		public void putInSet(K pKey, V[] pValues){
+			boolean existe=false;
+			   int posicion=hash(pKey);
+			   K actual= keysSet[posicion];
+			while(!existe&&actual!=null){
+				
+			if(actual.compareTo(pKey)==0){
+					existe=true;
+					valuesSet[posicion]= pValues;
+				    	
+				}
+				posicion=(posicion+1)%N;
+				actual=llaves[posicion];
+			}
+			nElementosSet+=pValues.length;
+			 rehash();
+				if(existe){
+					
+				}else{
+		    
+			int hashKey= hash(pKey);
+			while(keysSet[hashKey]!=null){
+				hashKey=(hashKey+1)%N;
+			}
+			keysSet[hashKey]=pKey;
+			valuesSet[hashKey]=pValues;
+			
+			}
+			
+		}
 		public V get(K pKey){
 		   int pos=hash(pKey);
-		    DuplaLP actual = llaves[pos];
+		    K actual = llaves[pos];
 		   while(actual!=null){
 			  
-			   if(actual!=null&&actual.darLlave().compareTo(pKey)==0)
-				   return (V) actual.darValor();
-			   pos++;
-			   if(pos==N)
-				   pos=0;
+			   if(actual.compareTo(pKey)==0)
+				   return values[pos];
+			   pos=(pos+1)%N;
 			   actual = llaves[pos];
 		   }
 		   return null;
 		}
 		public V delete(K pKey){
 			   int pos=hash(pKey);
-			    DuplaLP actual = llaves[pos];
+			    K actual = llaves[pos];
 			    boolean encontrado=false;
 			   while(actual!=null){
 				  
-				   if(actual!=null&&actual.darLlave().compareTo(pKey)==0&&!encontrado){
+				   if(actual.compareTo(pKey)==0&&!encontrado){
 					   llaves[pos]=null;
 					   encontrado =true;
 				   }
 				   if(encontrado){
+					   V valor= values[pos];
 					   llaves[pos]=null;
-					   put((K)actual.darLlave(),(V)actual.darValor());
+					   put(actual,valor);
 				   }
 				   pos++;
 				   if(pos==N)
@@ -87,52 +129,57 @@ public class HashLP<K extends Comparable<K>, V> {
 			   return null;
 			}
 
-	public V getI(K pKey){
-		IteratorD iterador = Keys(); 
-		while(iterador.hasNext()){
-			DuplaLP actual= (DuplaLP) iterador.next();
-			if(actual.darLlave().compareTo(pKey)==0)
-				return (V) actual.darValor();
-		}
-		return null;
-	}
+	
 	
 	private int hash(K key)
 	{
 		return (key.hashCode() & 0x7fffffff) % N;
 	}
 
- private IteratorD Keys(){
-	 IteratorD retornar= new IteradorD();
-	 return IteratorD;
+// private IteratorD<K> Keys(){
+//	 IteratorD retornar= ;
+//	 
+//	 return retornar;
+// }
+ public int darNElementosIndividuales(){
+	 return nElementosIndividuales;
+ }
+ public int darNElementosSet(){
+	 return nElementosSet;
+	 
+ }
+ public void rehash(){
+		if(nElementosSet*4>=N*3){
+			N=N*2;
+			K[] auxKeys = (K[])new Comparable[N];
+			V[][] auxValues= (V[][])new Object[N][capacidadSet];
+			int posActual=0;
+			while(auxKeys.length<nElementosSet){
+				int hash=hash(keysSet[posActual]);
+				auxKeys[hash] = keysSet[posActual];
+				auxValues[hash]= valuesSet[posActual];
+			}
+			keysSet=auxKeys;
+			valuesSet=auxValues;
+			
+		}
  }
 
-	private class IteratorD<DuplaLP> implements Iterator{
-         private int pos=nElementos;
-         
-		@Override
-		public boolean hasNext() {
-			if(pos<=0)
-			return false;
-			else return true;
-		}
-
-		@Override
-		public DuplaLP next() {
-			int volar = nElementos-pos;
-			DuplaLP actual= (DuplaLP) llaves[0];
-			int posAct=0;
-			while(actual==null||volar!=0){
-				posAct++;
-				actual= (DuplaLP) llaves[posAct];
-				if(actual!=null&& volar>0){
-					volar--;
-					actual=null;
-				}
-			}
-			pos--;
-			return actual;
-		}
+	
+ 
+	
+	
+	public static void main(String[] args) {
+		HashLP<Integer,String> hash=new HashLP<Integer,String>(3);
+		hash.put(1,  "uno");
+		hash.put(2,  "uno");
+		hash.put(3,  "tres");
+		hash.put(4,  "dos");
+		System.out.println(hash.get(1));
+		System.out.println(hash.get(4));
+		System.out.println(hash.get(3));
+		System.out.println(hash.get(2));
 		
 	}
+	
 }
