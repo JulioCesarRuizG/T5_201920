@@ -21,12 +21,22 @@ public class HashSC <K extends Comparable<K>, T> {
 		{
 			llaves[posicion].cambiarItem(dupla);
 		}
-		while(llaves[posicion].darSiguiente() != null)
+		else
 		{
-			llaves[posicion] = llaves[posicion].darSiguiente();
+			boolean encontrado = false;
+			Node<DuplaSC> nodo = llaves[posicion];
+			while(nodo.darSiguiente() != null && !encontrado)
+			{
+				DuplaSC dupla2 = nodo.darItem();
+				K llave = (K) dupla2.darLlave();
+				if( llave == pKey)
+				{
+					llaves[posicion].darItem().agregarValor(pValue);
+					encontrado = true;
+				}
+				nodo = nodo.darSiguiente();
+			}
 		}
-		Node nodo = new Node<K>(pKey, null);
-		llaves[posicion].cambiarSiguiente(nodo);
 		N++;
 		if(N/M >= 5)
 		{
@@ -49,8 +59,12 @@ public class HashSC <K extends Comparable<K>, T> {
 			K key = (K) dupla.darLlave();
 			if(key == llave)
 			{
-				todos[lugar] = (T) dupla.darValor();
-				lugar++;
+				T[] sacar = (T[]) dupla.darValores();
+				for(T valor : sacar)
+				{
+					todos[lugar] = valor;
+					lugar++;
+				}
 			}
 			buscar = buscar.darSiguiente();
 		}
@@ -65,6 +79,67 @@ public class HashSC <K extends Comparable<K>, T> {
 		}
 
 	}
+
+	public void put(K pkey, T pvalor)
+	{
+		int posicion = hash(pkey);
+		Node nodo = llaves[posicion];
+		while(nodo.darSiguiente() != null)
+		{
+			DuplaSC dupla = (DuplaSC) nodo.darItem();
+			K llave = (K) dupla.darLlave();
+			if(llave == pkey)
+			{
+				dupla.cambiarValor(pvalor);
+			}
+			nodo = nodo.darSiguiente();
+		}
+	}
+	
+	public T get(K pkey)
+	{
+		int posicion = hash(pkey);
+		Node nodo = llaves[posicion];
+		boolean encontrado = false;
+		T valor = null;
+		while(nodo.darSiguiente() != null && !encontrado)
+		{
+			DuplaSC dupla = (DuplaSC) nodo.darItem();
+			K llave = (K) dupla.darLlave();
+			if(llave == pkey)
+			{
+				valor = (T) dupla.darValores();
+				encontrado = true;
+			}
+			nodo = nodo.darSiguiente();
+		}
+		return valor;
+	}
+	
+	public T delete(K pkey)
+	{
+		int posicion = hash(pkey);
+		Node nodo = llaves[posicion];
+		Node primero = nodo;
+		boolean encontrado = false;
+		T valor = null;
+		while(nodo.darSiguiente() != null && !encontrado)
+		{
+			DuplaSC dupla = (DuplaSC) nodo.darItem();
+			K llave = (K) dupla.darLlave();
+			if(llave == pkey)
+			{
+				dupla.cambiarValor(null);
+				encontrado = true;
+				nodo.cambiarItem(dupla);
+			}
+			nodo = nodo.darSiguiente();
+		}
+		llaves[posicion] = primero;
+		return valor;
+	}
+	
+	
 
 	public Iterador<T> deleteSet(K pkey)
 	{
@@ -128,11 +203,15 @@ public class HashSC <K extends Comparable<K>, T> {
 				int zonadestinoK = Integer.parseInt(partes[2]);
 				if(trimestreK == trimestre && zonadestinoK == zonaDestimo && zonaorigenK == zonaOrigen)
 				{
-					double[] valores = (double[]) dupla.darValor();
-					double tiempoPromedio = valores[0];
-					int dia = (int) valores[1];
-					int lugar = dia -1;
-					viajes[lugar] = viajes[lugar] + "-" + trimestreK + "," + zonaorigenK + "," + zonadestinoK + "," + dia + "," + tiempoPromedio;
+					T[] sacar = (T[]) dupla.darValores();
+					for(T valor : sacar)
+					{
+						double[] valores = (double[]) valor;
+						double tiempoPromedio = valores[0];
+						int dia = (int) valores[1];
+						int lugar = dia -1;
+						viajes[lugar] = viajes[lugar] + "-" + trimestreK + "," + zonaorigenK + "," + zonadestinoK + "," + dia + "," + tiempoPromedio;
+					}
 				}
 				actual = actual.darSiguiente();
 			}
@@ -187,6 +266,7 @@ public class HashSC <K extends Comparable<K>, T> {
 			}
 		}
 	}
+	
 	public Iterador<K> Keys()
 	{
 		K[] todas = null;
