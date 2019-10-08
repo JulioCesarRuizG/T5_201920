@@ -1,34 +1,32 @@
 package model.data_structures;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
+public class HashSC <K extends Comparable<K>, T> {
 
-	private HashMap[] llaves;
+	private Node<DuplaSC>[] llaves;
 	private int N;
 	private int M;
 	private int pos = N;
 
 	public HashSC(int modulo) {
-		llaves = new HashMap[modulo];
+		llaves = new Node[modulo];
 		M = modulo;
 	}
 
 	public void putInSet( K pKey, T pValue)
 	{   
 		int posicion = hash(pKey);
-		if(llaves[posicion] != null)
+		DuplaSC dupla = new DuplaSC(pKey, pValue);
+		if(llaves[posicion].darItem() == null)
 		{
-			HashMap<K, T> valor= new HashMap<K, T>(); 
-			llaves[posicion] = valor;
-			llaves[posicion].put(pKey, pValue);
+			llaves[posicion].cambiarItem(dupla);
 		}
-		else 
+		while(llaves[posicion].darSiguiente() != null)
 		{
-			llaves[posicion].put(pKey, pValue);
+			llaves[posicion] = llaves[posicion].darSiguiente();
 		}
+		Node nodo = new Node<K>(pKey, null);
+		llaves[posicion].cambiarSiguiente(nodo);
 		N++;
 		if(N/M >= 5)
 		{
@@ -38,21 +36,23 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 
 	}
 
-	public Iterator<T> getSet(K llave)
+	public Iterador<T> getSet(K llave)
 	{
-		HashMap<K, T> buscado = null;
+		Node buscado = null;
 		int posicion = hash(llave);
-		HashMap<K, T> buscar = llaves[posicion];
-		if(buscar.containsKey(llave));
+		Node buscar = llaves[posicion];
+		T[] todos = null;
+		int lugar = 0;
+		while(buscar.darSiguiente() != null)
 		{
-			for(Map.Entry<K, T>entry:buscar.entrySet())
+			DuplaSC dupla = (DuplaSC) buscar.darItem();
+			K key = (K) dupla.darLlave();
+			if(key == llave)
 			{
-				if(entry.getKey() == llave)
-				{
-					T valor = entry.getValue();
-					buscado.put(llave, valor);
-				}
+				todos[lugar] = (T) dupla.darValor();
+				lugar++;
 			}
+			buscar = buscar.darSiguiente();
 		}
 		if(buscado == null)
 		{
@@ -60,22 +60,48 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 		}
 		else
 		{
-			Iterator<T> values= buscado.values().iterator();
-			return values;
+			Iterador<T> it = new Iterador<T>(todos);
+			return it;
 		}
 
 	}
 
-	public Iterator<T> deleteSet(K pkey)
+	public Iterador<T> deleteSet(K pkey)
 	{
-		Iterator<T> values= getSet(pkey);
+		Iterador<T> values= getSet(pkey);
 		int posicion = hash(pkey);
 		if(getSet(pkey) != null)
 		{
-			HashMap<K, T> buscar = llaves[posicion];
-			for(Map.Entry<K, T>entry:buscar.entrySet())
+			boolean primerCaso = false;
+			Node buscar = llaves[posicion];
+			while(primerCaso == false)
 			{
-				llaves[posicion].remove(entry.getKey());
+				DuplaSC dupla = (DuplaSC) buscar.darItem();
+				K key = (K) dupla.darLlave();
+				if(key == pkey)
+				{
+					llaves[posicion] = buscar.darSiguiente();
+				}
+				else
+				{
+					primerCaso = true;
+				}
+			}
+			while(buscar.darSiguiente() != null)
+			{
+				DuplaSC dupla = (DuplaSC) buscar.darSiguiente().darItem();
+				K key = (K) dupla.darLlave();
+				if(key == pkey)
+				{
+					buscar.cambiarSiguiente(buscar.darSiguiente().darSiguiente());
+				}
+				buscar = buscar.darSiguiente();
+			}
+			DuplaSC dupla = (DuplaSC) buscar.darSiguiente().darItem();
+			K key = (K) dupla.darLlave();
+			if(key == pkey)
+			{
+				buscar.cambiarSiguiente(null);
 			}
 		}
 		return values;
@@ -86,53 +112,29 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 		return (key.hashCode() & 0x7fffffff) % M;
 	}
 
-	private HashMap<T, K> totales()
-	{
-		//		for(DuplaSC k : llaves)
-		//			{
-		//				numElem = numElem + k.darTamanio();
-		//			}
-		//		T[] todos = (T[]) new Object[numElem];
-		//		for(DuplaSC k : llaves)
-		//		{
-		//			for(Object t : k.darValores())
-		//			{
-		//				todos[todos.length] = (T) t;
-		//			}
-		//			
-		//		}
-		//		valores = todos;
-		HashMap<T, K> diccionario = new HashMap<T, K>();
-		for(HashMap<K, T> k : llaves)
-		{
-			for(Map.Entry<K, T>entry:k.entrySet())
-			{
-				diccionario.put(entry.getValue(), entry.getKey());
-			}
-		}
-		return diccionario;
-	}
-	
 	public void buscarTiemposDeViaje(int trimestre, int zonaOrigen, int zonaDestimo)
 	{
 		String[] viajes = null;
-		for(HashMap<K, T> k : llaves)
+		for(Node k : llaves)
 		{
-			for(Map.Entry<K, T>entry:k.entrySet())
+			Node actual = k;
+			while(actual.darSiguiente() != null)
 			{
-				String separar = (String) entry.getKey();
+				DuplaSC dupla = (DuplaSC) actual.darItem();
+				String separar = (String) dupla.darLlave();
 				String[] partes = separar.split("-");
 				int trimestreK = Integer.parseInt(partes[0]);
 				int zonaorigenK = Integer.parseInt(partes[1]);
 				int zonadestinoK = Integer.parseInt(partes[2]);
 				if(trimestreK == trimestre && zonadestinoK == zonaDestimo && zonaorigenK == zonaOrigen)
 				{
-					double[] valores = (double[]) entry.getValue(); 
+					double[] valores = (double[]) dupla.darValor();
 					double tiempoPromedio = valores[0];
 					int dia = (int) valores[1];
 					int lugar = dia -1;
 					viajes[lugar] = viajes[lugar] + "-" + trimestreK + "," + zonaorigenK + "," + zonadestinoK + "," + dia + "," + tiempoPromedio;
 				}
+				actual = actual.darSiguiente();
 			}
 		}
 		for(String k : viajes)
@@ -157,20 +159,25 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 			if(encontrado == true)
 			{
 				M = i;
-				HashMap[] llaves2 = new HashMap[M];
+				Node[] llaves2 = new Node[M];
 				for(int k=0 ; k<llaves.length ; k++)
 				{
 					if(llaves[i] != null)
 					{
-						HashMap<K, T> actual = llaves[i];
-						for(Map.Entry<K, T>entry:actual.entrySet())
+						Node actual = llaves[i];
+						while(actual.darSiguiente() != null)
 						{
-							int posicion = hash(entry.getKey());
-							llaves2[posicion].put(entry.getKey(), entry.getValue());
+							DuplaSC dupla = (DuplaSC) actual.darItem();
+							K key = (K) dupla.darLlave();
+
+							int posicion = hash(key);
+							Node nodo = new Node(dupla, null);
+							llaves2[posicion].agregarAlFinal(nodo);
+							actual = actual.darSiguiente();
 						}
-						
+
 					}
-					
+
 				}
 				llaves = llaves2;
 				return;
@@ -180,26 +187,22 @@ public class HashSC <K extends Comparable<K>, T> implements Iterator<K>{
 			}
 		}
 	}
-	public Iterator<K> Keys()
+	public Iterador<K> Keys()
 	{
-		HashMap<T, K> diccionario = totales();
-		Iterator<K> values = (Iterator<K>) diccionario.values();
-		return values;
+		K[] todas = null;
+		int lugar = 0;
+		for(Node n: llaves)
+		{
+			Node actual = n;
+			while(actual.darSiguiente() != null)
+			{
+				todas[lugar] = (K) n.darItem();
+				actual = actual.darSiguiente();
+			}
+		}
+		Iterador it = new Iterador(todas);
+		return it;
 	}
 
-
-	@Override
-	public boolean hasNext() {
-		if(pos==0)
-			return false;
-		else return true;
-	}
-
-	@Override
-	public K next() {
-		int actual = pos;
-		pos--;
-		return (K) llaves[actual].darLlave();
-	}
 
 }

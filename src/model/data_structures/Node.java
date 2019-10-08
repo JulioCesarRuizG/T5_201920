@@ -44,4 +44,14 @@ public class Node<T> {
 	{
 		item = nuevo;
 	}
+	
+	public void agregarAlFinal(Node pNuevo)
+	{
+		Node actual = siguiente;
+		while(actual != null)
+		{
+			actual = actual.darSiguiente();
+		}
+		actual.cambiarSiguiente(pNuevo);
+	}
 }

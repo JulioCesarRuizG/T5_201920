@@ -6,9 +6,10 @@ public class DuplaSC<T, K>{
 	private T valor;
 	private int tam;
 
-	public DuplaSC(K pLlave)
+	public DuplaSC(K pLlave, T pValue)
 	{
 		llave = pLlave;
+		valor = pValue;
 	}
 
 	public void agregarValor(T pValue)
