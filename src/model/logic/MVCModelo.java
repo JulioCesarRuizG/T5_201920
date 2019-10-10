@@ -58,14 +58,15 @@ public class MVCModelo {
 				int  inicioID=Integer.parseInt(nextLine[0]);
 				int destinoID=Integer.parseInt(nextLine[1]);
 				int dia=Integer.parseInt(nextLine[2]);
+				double diaValue= dia;
 				double tiempoPromedio=Double.parseDouble(nextLine[3]);
 				double desviacionEstandar=Double.parseDouble(nextLine[4]);
 
 				String llave = trimestre + "-" + inicioID + "-" + destinoID;
 				
-				double[] valor = null;
+				Double[] valor = new Double[2];
 				valor[0] = tiempoPromedio;
-				valor[1] = dia;
+				valor[1] = diaValue;
 
 				if(primero == false)
 				{
@@ -78,7 +79,7 @@ public class MVCModelo {
 				primero = true;				
 				
 				sc.putInSet(llave, valor);
-				lp.put(llave, valor);
+				lp.putInSet(llave, valor);
 				total++;
 			}
 		}
@@ -95,17 +96,18 @@ public class MVCModelo {
 				int  inicioID=Integer.parseInt(nextLine[0]);
 				int destinoID=Integer.parseInt(nextLine[1]);
 				int dia=Integer.parseInt(nextLine[2]);
+				double diaValue = dia;
 				double tiempoPromedio=Double.parseDouble(nextLine[3]);
 				double desviacionEstandar=Double.parseDouble(nextLine[4]);
 
 				String llave = trimestre + "-" + inicioID + "-" + destinoID;
-				double[] valor = null;
+				Double[] valor = new Double[2];
 				valor[0] = tiempoPromedio;
-				valor[1] = dia;
+				valor[1] = diaValue;
 				
 				
 				sc.putInSet(llave, valor);
-				lp.put(llave, valor);
+				lp.putInSet(llave, valor);
 				total++;
 			}
 		}
@@ -123,16 +125,17 @@ public class MVCModelo {
 				int  inicioID=Integer.parseInt(nextLine[0]);
 				int destinoID=Integer.parseInt(nextLine[1]);
 				int dia=Integer.parseInt(nextLine[2]);
+				double diaValue= dia;
 				double tiempoPromedio=Double.parseDouble(nextLine[3]);	
 				double desviacionEstandar=Double.parseDouble(nextLine[4]);
 
 				String llave = trimestre + "-" + inicioID + "-" + destinoID;
-				double[] valor = null;
+				Double[] valor = new Double[2];
 				valor[0] = tiempoPromedio;
-				valor[1] = dia;
+				valor[1] = diaValue;
 				
 				sc.putInSet(llave, valor);
-				lp.put(llave, valor);
+				lp.putInSet(llave, valor);
 				total++;
 			}
 		}
@@ -150,13 +153,14 @@ public class MVCModelo {
 				int  inicioID=Integer.parseInt(nextLine[0]);
 				int destinoID=Integer.parseInt(nextLine[1]);
 				int dia=Integer.parseInt(nextLine[2]);
+				double diaValue=dia;
 				double tiempoPromedio=Double.parseDouble(nextLine[3]);
 				double desviacionEstandar=Double.parseDouble(nextLine[4]);
 
 				String llave = trimestre + "-" + inicioID + "-" + destinoID;		
-				double[] valor = null;
+				Double[] valor = new Double[2];
 				valor[0] = tiempoPromedio;
-				valor[1] = dia;
+				valor[1] = diaValue;
 				
 				datosUltimo[0] = inicioID;
 				datosUltimo[1] = destinoID;
@@ -164,7 +168,7 @@ public class MVCModelo {
 				datosUltimo[3] = tiempoPromedio;
 				
 				sc.putInSet(llave, valor);
-				lp.put(llave, valor);
+				lp.putInSet(llave, valor);
 				total++;
 			}
 		}

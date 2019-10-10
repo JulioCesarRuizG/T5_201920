@@ -174,11 +174,7 @@ public class HashLP<K extends Comparable<K>, V> {
 		return (key.hashCode() & 0x7fffffff) % NSet;
 	}
 
-	// private IteratorD<K> Keys(){
-		//	 IteratorD retornar= ;
-		//	 
-		//	 return retornar;
-		// }
+
 	public int darNElementosIndividuales(){
 		return nElementosIndividuales;
 	}
