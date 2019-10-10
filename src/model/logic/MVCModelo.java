@@ -18,8 +18,8 @@ public class MVCModelo {
 	/**
 	 * Atributos del modelo del mundo
 	 */
-	private  HashSC sc;
-	private HashLP lp;
+	private  HashSC<String,Double[]> sc;
+	private HashLP<String,Double> lp;
 
 
 	/**
@@ -43,8 +43,8 @@ public class MVCModelo {
 			carga4 = "./data/bogota-cadastral-2018-4-All-HourlyAggregate.csv";
 			
 		boolean primero = false;
-		double[] datosPrimero = null;
-		double[] datosUltimo = null;
+		Double[] datosPrimero = new Double[4];
+		Double[] datosUltimo = new Double[4];
 		int trimestre = 1;
 		int total = 0;
 		reader1= new CSVReader(new FileReader(carga1));
@@ -70,9 +70,9 @@ public class MVCModelo {
 
 				if(primero == false)
 				{
-					datosPrimero[0] = inicioID;
-					datosPrimero[1] = destinoID;
-					datosPrimero[2] = dia;
+					datosPrimero[0] = inicioID+0.1-0.1;
+					datosPrimero[1] = destinoID+0.1-0.1;
+					datosPrimero[2] = dia+0.1-0.1;
 					datosPrimero[3]	= tiempoPromedio;
 				}
 
@@ -151,7 +151,9 @@ public class MVCModelo {
 			else
 			{
 				int  inicioID=Integer.parseInt(nextLine[0]);
+				double inicioIDValue=inicioID;
 				int destinoID=Integer.parseInt(nextLine[1]);
+				double destinoIDValue=destinoID;
 				int dia=Integer.parseInt(nextLine[2]);
 				double diaValue=dia;
 				double tiempoPromedio=Double.parseDouble(nextLine[3]);
@@ -162,9 +164,9 @@ public class MVCModelo {
 				valor[0] = tiempoPromedio;
 				valor[1] = diaValue;
 				
-				datosUltimo[0] = inicioID;
-				datosUltimo[1] = destinoID;
-				datosUltimo[2] = dia;
+				datosUltimo[0] = inicioIDValue;
+				datosUltimo[1] = destinoIDValue;
+				datosUltimo[2] = diaValue;
 				datosUltimo[3] = tiempoPromedio;
 				
 				sc.putInSet(llave, valor);
