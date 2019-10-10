@@ -17,9 +17,9 @@ public class HashSC <K extends Comparable<K>, T> {
 	{   
 		int posicion = hash(pKey);
 		DuplaSC dupla = new DuplaSC(pKey, pValue);
-		if(llaves[posicion].darItem() == null)
+		if(llaves[posicion]== null)
 		{
-			llaves[posicion].cambiarItem(dupla);
+			llaves[posicion] = new Node<DuplaSC>(dupla, null);
 		}
 		else
 		{

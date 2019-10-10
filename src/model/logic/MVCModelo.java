@@ -28,6 +28,8 @@ public class MVCModelo {
 	 */
 	public MVCModelo() throws FileNotFoundException
 	{
+		sc = new HashSC<String, Double[]>(7);
+		lp = new HashLP<String, Double>(7);
 		CSVReader reader1 = null;
 		CSVReader reader2 = null;
 		CSVReader reader3 = null;
@@ -37,10 +39,10 @@ public class MVCModelo {
 		String carga3 = "";
 		String carga4 = "";
 		
-			carga1 = "./data/bogota-cadastral-2018-1-All-HourlyAggregate.csv";
-			carga2 = "./data/bogota-cadastral-2018-2-All-HourlyAggregate.csv";
-			carga3 = "./data/bogota-cadastral-2018-3-All-HourlyAggregate.csv";
-			carga4 = "./data/bogota-cadastral-2018-4-All-HourlyAggregate.csv";
+			carga1 = "./data/bogota-cadastral-2018-1-WeeklyAggregate.csv";
+			carga2 = "./data/bogota-cadastral-2018-2-WeeklyAggregate.csv";
+			carga3 = "./data/bogota-cadastral-2018-3-WeeklyAggregate.csv";
+			carga4 = "./data/bogota-cadastral-2018-4-WeeklyAggregate.csv";
 			
 		boolean primero = false;
 		Double[] datosPrimero = new Double[4];
@@ -49,13 +51,13 @@ public class MVCModelo {
 		int total = 0;
 		reader1= new CSVReader(new FileReader(carga1));
 		for(String[] nextLine : reader1) {
-			if(nextLine.toString().contains("sourceid,dstid,hod,mean_travel_time,standard_deviation_travel_time,geometric_mean_travel_time,geometric_standard_deviation_travel_time"))
+			if(nextLine[0].toString().contains("sourceid"))
 			{
 
 			}
 			else
 			{
-				int  inicioID=Integer.parseInt(nextLine[0]);
+				int inicioID=Integer.parseInt(nextLine[0]);
 				int destinoID=Integer.parseInt(nextLine[1]);
 				int dia=Integer.parseInt(nextLine[2]);
 				double diaValue= dia;
@@ -78,8 +80,8 @@ public class MVCModelo {
 
 				primero = true;				
 				
-				sc.putInSet(llave, valor);
 				lp.putInSet(llave, valor);
+				sc.putInSet(llave, valor);
 				total++;
 			}
 		}
@@ -87,7 +89,7 @@ public class MVCModelo {
 		
 		reader2= new CSVReader(new FileReader(carga2));
 		for(String[] nextLine : reader2) {
-			if(nextLine.toString().contains("sourceid,dstid,hod,mean_travel_time,standard_deviation_travel_time,geometric_mean_travel_time,geometric_standard_deviation_travel_time"))
+			if(nextLine[0].toString().contains("sourceid"))
 			{
 
 			}
@@ -116,7 +118,7 @@ public class MVCModelo {
 		
 		reader3= new CSVReader(new FileReader(carga3));
 		for(String[] nextLine : reader3) {
-			if(nextLine.toString().contains("sourceid,dstid,hod,mean_travel_time,standard_deviation_travel_time,geometric_mean_travel_time,geometric_standard_deviation_travel_time"))
+			if(nextLine[0].toString().contains("sourceid"))
 			{
 
 			}
@@ -144,7 +146,7 @@ public class MVCModelo {
 		
 		reader4= new CSVReader(new FileReader(carga4));
 		for(String[] nextLine : reader4) {
-			if(nextLine.toString().contains("sourceid,dstid,hod,mean_travel_time,standard_deviation_travel_time,geometric_mean_travel_time,geometric_standard_deviation_travel_time"))
+			if(nextLine[0].toString().contains("sourceid"))
 			{
 
 			}
